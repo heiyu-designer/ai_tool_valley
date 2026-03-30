@@ -6,8 +6,13 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
+  // 支持环境变量 DATABASE_URL
+  // Docker 部署: file:/app/data/${PROJECT_NAME}.db
+  // 本地开发: file:./dev.db
+  const databaseUrl = process.env.DATABASE_URL || 'file:./dev.db';
+
   const adapter = new PrismaLibSql({
-    url: 'file:./dev.db',
+    url: databaseUrl,
   });
   return new PrismaClient({ adapter });
 }
