@@ -1,0 +1,29 @@
+version: '3.8'
+
+# 项目名称 - 用于隔离不同项目的数据
+name: ai-tool-valley
+
+services:
+  app:
+    build: .
+    container_name: ${PROJECT_NAME:-ai-tool-valley}-app
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./data/${PROJECT_NAME:-ai_tool_valley}.db
+      - AUTH_SECRET=${AUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:${PORT:-3000}}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM}
+    volumes:
+      # 数据持久化到宿主机的项目目录，防止与其他项目冲突
+      - ./data:/app/data
+    networks:
+      - ${PROJECT_NAME:-ai_tool_valley}-network
+    restart: unless-stopped
+
+networks:
+  ${PROJECT_NAME:-ai_tool_valley}-network:
+    name: ${PROJECT_NAME:-ai_tool_valley}-network
+    driver: bridge
