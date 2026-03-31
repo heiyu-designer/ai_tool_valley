@@ -11,12 +11,14 @@ import { Package, Zap, TrendingUp, Star } from 'lucide-react';
 export default function HomePage() {
   const { data: session } = useSession();
   const [tools, setTools] = useState<Tool[]>([]);
+  const [featuredTools, setFeaturedTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<CategoryValue | null>(null);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
     fetchTools();
+    fetchFeaturedTools();
   }, [selectedCategory, search]);
 
   const fetchTools = async () => {
@@ -39,6 +41,16 @@ export default function HomePage() {
     }
   };
 
+  const fetchFeaturedTools = async () => {
+    try {
+      const res = await fetch('/api/tools?featured=true');
+      const data = await res.json();
+      setFeaturedTools(data);
+    } catch (error) {
+      console.error('获取推荐工具失败:', error);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     if (!confirm('确定要删除这个工具吗？')) return;
 
@@ -46,6 +58,7 @@ export default function HomePage() {
       const res = await fetch(`/api/tools/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setTools(tools.filter(t => t.id !== id));
+        setFeaturedTools(featuredTools.filter(t => t.id !== id));
       }
     } catch (error) {
       console.error('删除工具失败:', error);
@@ -81,7 +94,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {[
             { icon: Package, label: '收录工具', value: tools.length, color: 'indigo' },
-            { icon: Star, label: '精选推荐', value: 3, color: 'amber' },
+            { icon: Star, label: '精选推荐', value: featuredTools.length, color: 'amber' },
             { icon: TrendingUp, label: '本周新增', value: 2, color: 'green' },
           ].map((stat, i) => (
             <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
@@ -97,6 +110,28 @@ export default function HomePage() {
             </div>
           ))}
         </div>
+
+        {/* 推荐工具区域 */}
+        {featuredTools.length > 0 && !selectedCategory && !search && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Star className="w-5 h-5 text-amber-500" />
+              <h2 className="text-xl font-bold text-gray-900">精选推荐</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredTools.map((tool) => (
+                <ToolCard
+                  key={tool.id}
+                  tool={tool}
+                  isLoggedIn={!!session}
+                  showActions={true}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 搜索和筛选 */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">

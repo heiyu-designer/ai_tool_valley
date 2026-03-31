@@ -1,13 +1,15 @@
 'use client';
 
 import { CATEGORIES, CategoryValue } from '@/types';
-import { Sparkles, Code, PenTool, MessageCircle } from 'lucide-react';
+import { Grid3X3, MessageCircle, Wand2, Code2, Palette, GraduationCap, TrendingUp } from 'lucide-react';
 
 const categoryIcons: Record<string, React.ReactNode> = {
-  productivity: <Sparkles className="w-4 h-4" />,
-  coding: <Code className="w-4 h-4" />,
-  content: <PenTool className="w-4 h-4" />,
   chat: <MessageCircle className="w-4 h-4" />,
+  creation: <Wand2 className="w-4 h-4" />,
+  coding: <Code2 className="w-4 h-4" />,
+  design: <Palette className="w-4 h-4" />,
+  learning: <GraduationCap className="w-4 h-4" />,
+  marketing: <TrendingUp className="w-4 h-4" />,
 };
 
 interface CategoryFilterProps {
@@ -26,6 +28,7 @@ export function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
             : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
         }`}
       >
+        <Grid3X3 className="w-4 h-4" />
         全部
       </button>
       {CATEGORIES.map((category) => (
@@ -37,6 +40,9 @@ export function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
               ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20'
               : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
           }`}
+          style={selected === category.value ? {
+            background: `linear-gradient(to right, ${category.color}, ${category.color}dd)`
+          } : {}}
         >
           {categoryIcons[category.value]}
           {category.label}

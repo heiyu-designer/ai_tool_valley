@@ -33,9 +33,10 @@ export function ToolForm({ tool }: ToolFormProps) {
     name: tool?.name || '',
     url: tool?.url || '',
     icon: tool?.icon || '',
-    category: tool?.category || ('productivity' as CategoryValue),
+    category: tool?.category || ('chat' as CategoryValue),
     description: tool?.description || '',
     pricing: tool?.pricing || ('free' as PricingType),
+    featured: tool?.featured || false,
   });
 
   // 自动获取图标
@@ -227,6 +228,21 @@ export function ToolForm({ tool }: ToolFormProps) {
                 { value: 'freemium', label: '免费/付费' },
               ]}
             />
+          </div>
+
+          {/* 推荐开关 */}
+          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-100">
+            <input
+              type="checkbox"
+              id="featured"
+              checked={form.featured}
+              onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+              className="w-5 h-5 rounded border-amber-300 text-amber-500 focus:ring-amber-500 cursor-pointer"
+            />
+            <label htmlFor="featured" className="cursor-pointer flex-1">
+              <span className="font-medium text-slate-900">设为精选推荐</span>
+              <p className="text-sm text-slate-500">推荐工具会展示在首页精选区域</p>
+            </label>
           </div>
 
           <Textarea

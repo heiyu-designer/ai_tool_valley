@@ -28,6 +28,7 @@ model Tool {
   category    String
   description String?
   pricing     String   @default("free")
+  featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
 
   @@map("tools")

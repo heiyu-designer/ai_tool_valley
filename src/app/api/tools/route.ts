@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category') as CategoryValue | null;
     const search = searchParams.get('search');
+    const featured = searchParams.get('featured');
 
     const where: Record<string, unknown> = {};
 
@@ -23,6 +24,10 @@ export async function GET(request: NextRequest) {
         { name: { contains: search } },
         { description: { contains: search } },
       ];
+    }
+
+    if (featured === 'true') {
+      where.featured = true;
     }
 
     const tools = await prisma.tool.findMany({
@@ -55,7 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, url, icon, category, description, pricing } = body;
+    const { name, url, icon, category, description, pricing, featured } = body;
 
     if (!name || !url || !category) {
       return NextResponse.json(
@@ -72,6 +77,7 @@ export async function POST(request: NextRequest) {
         category,
         description: description || null,
         pricing: pricing || 'free',
+        featured: featured || false,
       },
     });
 
