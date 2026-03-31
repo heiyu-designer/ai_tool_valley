@@ -28,7 +28,7 @@ NC='\033[0m' # No Color
 
 # 项目配置
 PROJECT_NAME=${PROJECT_NAME:-ai_tool_valley}
-PORT=${PORT:-3000}
+PORT=${PORT:-3876}
 DATA_DIR="./data/${PROJECT_NAME}"
 
 echo -e "${BLUE}========================================${NC}"

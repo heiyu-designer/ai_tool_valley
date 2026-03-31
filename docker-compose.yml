@@ -1,32 +1,22 @@
 version: '3.8'
 
-# =============================================
-# AI Tool Valley Docker 部署配置
-# =============================================
-# 使用方式：
-#   部署项目1: PROJECT_NAME=project_one PORT=3001 ./deploy.sh
-#   部署项目2: PROJECT_NAME=project_two PORT=3002 ./deploy.sh
-# =============================================
-
 services:
   app:
     build: .
     container_name: ${PROJECT_NAME:-ai_tool_valley}-app
     ports:
-      - "${PORT:-3000}:3000"
+      - "${PORT:-3876}:3000"
     environment:
       - NODE_ENV=production
-      # SQLite 数据库路径（通过项目名称隔离）
       - DATABASE_URL=file:/app/data/${PROJECT_NAME:-ai_tool_valley}.db
       - AUTH_SECRET=${AUTH_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:${PORT:-3000}}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - EMAIL_FROM=${EMAIL_FROM}
     volumes:
-      # 数据卷：使用项目名称命名，实现完全隔离
-      - ${PROJECT_NAME:-ai_tool_valley}-data:/app/data
+      - ./data/${PROJECT_NAME:-ai_tool_valley}:/app/data
     networks:
-      - ${PROJECT_NAME:-ai_tool_valley}-network
+      - app-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
@@ -35,38 +25,6 @@ services:
       retries: 3
       start_period: 40s
 
-# =============================================
-# 可选：PostgreSQL 数据库（用于生产环境扩展）
-# =============================================
-# 取消注释以下内容启用 PostgreSQL
-#
-#   db:
-#     image: postgres:15-alpine
-#     container_name: ${PROJECT_NAME:-ai_tool_valley}-db
-#     environment:
-#       - POSTGRES_DB=${PROJECT_NAME:-ai_tool_valley}
-#       - POSTGRES_USER=postgres
-#       - POSTGRES_PASSWORD=${DB_PASSWORD:-change-me}
-#     volumes:
-#       - ${PROJECT_NAME:-ai_tool_valley}-pgdata:/var/lib/postgresql/data
-#     networks:
-#       - ${PROJECT_NAME:-ai_tool_valley}-network
-#     restart: unless-stopped
-#     healthcheck:
-#       test: ["CMD-SHELL", "pg_isready -U postgres"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#
-# 修改 app 服务环境变量:
-#   - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-change-me}@db:5432/${PROJECT_NAME:-ai_tool_valley}
-
 networks:
-  ${PROJECT_NAME:-ai_tool_valley}-network:
-    name: ${PROJECT_NAME:-ai_tool_valley}-network
+  app-network:
     driver: bridge
-
-volumes:
-  # 数据卷：每个项目使用独立的命名卷
-  ${PROJECT_NAME:-ai_tool_valley}-data:
-    name: ${PROJECT_NAME:-ai_tool_valley}-data

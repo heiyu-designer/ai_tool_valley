@@ -99,9 +99,28 @@ src/app/
 ## 环境变量
 
 ```
-DATABASE_URL="file:./prisma/dev.db"    # 本地 SQLite
+DATABASE_URL="file:./dev.db"            # 本地 SQLite（生产环境通过 docker-compose 配置）
 AUTH_SECRET=<openssl rand -base64 32>   # NextAuth 必需
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:3876"    # 开发服务器端口
 RESEND_API_KEY="re_xxxxxx"              # Resend API 密钥
 EMAIL_FROM="AI Tool Valley <noreply@...>"
+```
+
+## Docker 部署
+
+```bash
+# 单项目部署
+./deploy.sh
+
+# 多项目隔离部署
+PROJECT_NAME=project_one PORT=3877 ./deploy.sh
+```
+
+**隔离机制**：通过 `PROJECT_NAME` 环境变量隔离数据库文件、网络和容器名。
+
+**常用命令**：
+```bash
+docker logs ai_tool_valley-app -f   # 查看日志
+docker exec -it ai_tool_valley-app sh  # 进入容器
+docker compose down                  # 停止服务
 ```
