@@ -58,9 +58,9 @@ src/app/
 - **VerificationCode**: id, email, code, expiresAt, used, createdAt
 
 ### 关键类型（`src/types/index.ts`）
-- `CategoryValue`: 'productivity' | 'coding' | 'content' | 'chat'（对应：办公提效、代码编程、自媒体、AI聊天）
+- `CategoryValue`: 'chat' | 'creation' | 'coding' | 'design' | 'learning' | 'marketing'（AI对话、AI创作、编程开发、设计创意、学习研究、营销效率）
 - `PricingType`: 'free' | 'paid' | 'freemium'（对应：免费、付费、免费/付费）
-- `Tool`: 数据库中的完整工具对象
+- `Tool`: 数据库中的完整工具对象（含 featured 字段）
 
 ### 认证流程
 1. 用户注册时填写邮箱，发送 6 位数字验证码
@@ -70,9 +70,19 @@ src/app/
 5. 受保护路由未登录时重定向至 `/login`
 
 ### 工具图标
-- **预定义图标**: `ToolCard.tsx` 中的 `knownToolIcons` 为热门 AI 工具提供 SVG 图标
-- **Clearbit Logo API**: 有 URL 的工具使用 `https://logo.clearbit.com/${domain}` 获取图标
-- **生成图标**: 根据分类生成渐变色背景 + 字母的 SVG 图标作为默认图标
+- **Google Favicons API**: `https://www.google.com/s2/favicons?domain=${domain}&sz=64` 获取网站 favicon
+- **预定义图标**: 热门工具使用预定义的 favicon 地址
+- **生成图标**: 无法获取时使用工具品牌色或分类渐变色背景 + 字母
+
+### 数据初始化
+部署到新环境时，使用以下命令导入初始化数据：
+```bash
+./scripts/import-data.sh                    # 导入到 dev.db
+./scripts/import-data.sh data/test.db      # 导入到指定数据库
+```
+初始化数据位于 `prisma/seed.sql`，包含：
+- 2 个测试用户
+- 40 个 AI 工具（6 个分类，8 个精选推荐）
 
 ## 重要实现说明
 
