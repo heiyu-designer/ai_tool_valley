@@ -6,7 +6,7 @@
 
 ```bash
 npm install          # 安装依赖
-npm run dev          # 启动开发服务器 (http://localhost:3000)
+npm run dev          # 启动开发服务器 (http://localhost:3876)
 npm run build        # 生产环境构建
 npm run lint         # 运行 ESLint
 ```
@@ -54,7 +54,7 @@ src/app/
 
 ### 数据模型（Prisma）
 - **User**: id, email, password（bcrypt 加密）, createdAt
-- **Tool**: id, name, url, icon, category, description, pricing, createdAt
+- **Tool**: id, name, url, icon, category, description, pricing, **featured**（是否精选推荐）, createdAt
 - **VerificationCode**: id, email, code, expiresAt, used, createdAt
 
 ### 关键类型（`src/types/index.ts`）
